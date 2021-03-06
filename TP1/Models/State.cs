@@ -7,5 +7,6 @@ namespace TP1.Models
     public interface State
     {
         IDictionary<object, State> PosibleActions();
+        bool IsGoal();
     }
 }

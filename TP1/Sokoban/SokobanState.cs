@@ -16,6 +16,10 @@ namespace TP1.Sokoban
         {
             throw new NotImplementedException();
         }
+        public bool IsGoal()
+        {
+            throw new NotImplementedException();
+        }
 
         public IDictionary<object, State> PosibleActions()
         {

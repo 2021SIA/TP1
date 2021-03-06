@@ -9,23 +9,17 @@ namespace TP1.Models
         public Node Root { get; private set; }
         public class Node
         {
-            private State State { get; set; }
-            IEnumerable<Node> Children { get => children.AsReadOnly(); }
+            public Node Parent { get; }
+            public State State { get; set; }
             
-            private List<Node> children;
-
-            public Node(State state)
+            public Node(Node parent, State state)
             {
+                Parent = parent;
                 State = state;
-                children = new List<Node>();
             }
 
-            public void AddChildren(Node node)
-            {
-                children.Add(node);
-            }
         }
 
-        protected abstract Node NextNode();
+        protected abstract Node GetSolution();
     }
 }
