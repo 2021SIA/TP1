@@ -12,23 +12,9 @@ namespace TP1.Models
             StartingDepth = startingDepth;
         }
         
-        private Node search(){
-
-        }
+        
         private Node searchSolution(Node n, HashSet<State> statesCache)
         {
-            //Si es un estado repetido, retorno null.
-            if(statesCache.Contains(n.State))
-            {
-                return null;
-            }
-            //Si llego a un estado que es solucion, retorno el nodo.
-            else if (n.State.IsGoal())
-            {
-                return n;
-            }
-            //Agrego el estado al cache para verificar estados repetidos.
-            statesCache.Add(n.State);
             //Obtengo las posibles acciones a partir del estado actual.
             IDictionary<object, State> posibleActions = n.State.PosibleActions();
             Node solution = null;
@@ -60,7 +46,14 @@ namespace TP1.Models
         {
             Node solution = null;
             HashSet<State> statesCache = new HashSet<State>();
-            
+
+            if (Root.State.IsGoal())
+            {
+                return Root;
+            }
+            //Agrego el estado al cache para verificar estados repetidos.
+            statesCache.Add(Root.State);
+
             //Busco la solucion a partir de la raiz.
             solution = searchSolution(Root, statesCache);
             return solution;
