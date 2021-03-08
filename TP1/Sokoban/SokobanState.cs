@@ -15,8 +15,33 @@ namespace TP1.Sokoban
 
         public bool IsValidAction(object action, out State next)
         {
-            throw new NotImplementedException();
+            Point nextPos = new Point(Player.X, Player.Y);
+            Point nextAfterPos = new Point(Player.X, Player.Y);
+            switch (action)
+            {
+                case Up:
+                    nextPos.Y -=1;
+                    nextAfterPos.Y -=2;
+                    break;
+                case Down:
+                    nextPos.Y +=1;
+                    nextAfterPos.Y +=2;
+                    break;
+                case Left:
+                    nextPos.X -=1;
+                    nextAfterPos.X -=2;
+                    break;
+                case Right:
+                    nextPos.X +=1;
+                    nextAfterPos.X +=2;
+                    break;
+            }
+            if( (!walls.Contains(nextPos)) && (boxes.Contains(nextPos) && !(boxes.Contains(nextAfterPos) || walls.Contains(nextAfterPos))) ){
+                return true;
+            }
+            return false;
         }
+        
         public bool IsGoal()
         {
             throw new NotImplementedException();
