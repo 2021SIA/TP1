@@ -5,14 +5,7 @@ using System.Text;
 namespace TP1.Models
 {
     public class DFS : SearchTree
-    {
-        public int StartingDepth { get; set; }
-        public DFS()
-        {
-            StartingDepth = startingDepth;
-        }
-        
-        
+    {   
         private Node searchSolution(Node n, HashSet<State> statesCache)
         {
             //Obtengo las posibles acciones a partir del estado actual.
@@ -26,13 +19,14 @@ namespace TP1.Models
                 if(child.State.IsGoal()){
                     return child;
                 }
+                // si no lo es, y no es un estado repetido lo agrega a posible children
                 else if(!statesCache.Contains(child.State))
                 {
                     posibleChildren.Add(child);
                     statesCache.Add(child.State);
                 }
             }
-            //Expando los hijos
+            
             foreach(Node child in posibleChildren)
             {
                 //Busco la solucion a partir de los estados siguientes.
