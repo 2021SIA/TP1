@@ -15,7 +15,7 @@ namespace TP1.Models
             //Me fijo si alguno de sus hijos es la solucion
             foreach(KeyValuePair<object,State> action in posibleActions)
             {
-                child = new Node(n, action.Value);
+                var child = new Node(n, action.Value);
                 if(child.State.IsGoal()){
                     return child;
                 }

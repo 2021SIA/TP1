@@ -11,40 +11,66 @@ namespace TP1.Sokoban
         public SokobanMap Map {get;}
         public Point Player { get; }
         public IEnumerable<Point> Boxes { get => boxes; }
-        HashSet<Point> boxes;
+        private readonly ICollection<Point> boxes;
+
+        public SokobanState(SokobanMap map, Point playerPosition, IEnumerable<Point> boxes)
+        {
+            Map = map;
+            Player = playerPosition;
+            this.boxes = boxes.ToArray();
+        }
 
         public bool IsValidAction(object action, out State next)
         {
             Point nextPos = new Point(Player.X, Player.Y);
             Point nextAfterPos = new Point(Player.X, Player.Y);
-            switch (action)
+            switch ((SokobanActions)action)
             {
-                case Up:
+                case SokobanActions.Up:
                     nextPos.Y -=1;
                     nextAfterPos.Y -=2;
                     break;
-                case Down:
+                case SokobanActions.Down:
                     nextPos.Y +=1;
                     nextAfterPos.Y +=2;
                     break;
-                case Left:
+                case SokobanActions.Left:
                     nextPos.X -=1;
                     nextAfterPos.X -=2;
                     break;
-                case Right:
+                case SokobanActions.Right:
                     nextPos.X +=1;
                     nextAfterPos.X +=2;
                     break;
             }
-            if( (!walls.Contains(nextPos)) && (boxes.Contains(nextPos) && !(boxes.Contains(nextAfterPos) || walls.Contains(nextAfterPos))) ){
+            if(boxes.Contains(nextPos))
+            {
+                if (!(boxes.Contains(nextAfterPos) || Map.Walls.Contains(nextAfterPos)))
+                {
+                    next = new SokobanState(Map, nextPos, boxes.Select(box => box == nextPos ? nextAfterPos : box));
+                    return true;
+                }
+                else
+                {
+                    next = null;
+                    return false;
+                }
+            }
+            else if(!Map.Walls.Contains(nextPos))
+            {
+                next = new SokobanState(Map, nextPos, boxes);
                 return true;
             }
-            return false;
+            else
+            {
+                next = null;
+                return false;
+            }
         }
         
         public bool IsGoal()
         {
-            throw new NotImplementedException();
+            return boxes.All(box => Map.Objectives.Contains(box));
         }
 
         public IDictionary<object, State> PosibleActions()
@@ -75,8 +101,8 @@ namespace TP1.Sokoban
 
         public class SokobanMap
         {
-            IEnumerable<Point> Walls { get => walls; }
-            IEnumerable<Point> Objectives { get => objectives; }
+            public IEnumerable<Point> Walls { get => walls; }
+            public IEnumerable<Point> Objectives { get => objectives; }
 
             HashSet<Point> walls;
             List<Point> objectives;
