@@ -1,4 +1,6 @@
 ﻿using System;
+using TP1.Models;
+using TP1.Sokoban;
 
 namespace TP1
 {
@@ -6,7 +8,9 @@ namespace TP1
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            var game = SokobanFactory.FromFile("Maps/example2.txt");
+            var search = new DFS(game);
+            var solution = search.GetSolution();
         }
     }
 }

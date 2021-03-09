@@ -6,6 +6,7 @@ namespace TP1.Models
 {
     public class DFS : SearchTree
     {   
+        public DFS(State root) : base(root) { }
         private Node searchSolution(Node n, HashSet<State> statesCache)
         {
             //Obtengo las posibles acciones a partir del estado actual.
@@ -36,7 +37,7 @@ namespace TP1.Models
             }
             return solution;
         }
-        protected override Node GetSolution()
+        public override Node GetSolution()
         {
             Node solution = null;
             HashSet<State> statesCache = new HashSet<State>();

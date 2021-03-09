@@ -7,7 +7,7 @@ namespace TP1.Models
     public class IDDFS : SearchTree
     {
         public int StartingDepth { get; set; }
-        public IDDFS(int startingDepth)
+        public IDDFS(int startingDepth, State root) : base(root)
         {
             StartingDepth = startingDepth;
         }
@@ -38,7 +38,7 @@ namespace TP1.Models
             }
             return solution;
         }
-        protected override Node GetSolution()
+        public override Node GetSolution()
         {
             int currentDepthLimit = StartingDepth, topLimit = StartingDepth, bottomLimit = 0;
             bool foundSolution = false;

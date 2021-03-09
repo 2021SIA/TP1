@@ -7,6 +7,12 @@ namespace TP1.Models
     public abstract class SearchTree
     {
         public Node Root { get; private set; }
+        protected SearchTree(State root)
+        {
+            Root = new Node(null, root);
+        }
+        public abstract Node GetSolution();
+
         public class Node
         {
             public Node Parent { get; }
@@ -19,7 +25,5 @@ namespace TP1.Models
             }
 
         }
-
-        protected abstract Node GetSolution();
     }
 }
