@@ -15,9 +15,10 @@ namespace TP1.Sokoban
 
             Point pos = Point.Empty;
             using var stream = new FileStream(path, FileMode.Open);
-            while (stream.CanRead)
+            var reader = new StreamReader(stream);
+            while (!reader.EndOfStream)
             {
-                int c = stream.ReadByte();
+                char c = (char)reader.Read();
                 if (c == '\n')
                 {
                     pos.X = 0;

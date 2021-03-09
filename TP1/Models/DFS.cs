@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -12,11 +12,11 @@ namespace TP1.Models
             //Obtengo las posibles acciones a partir del estado actual.
             IDictionary<object, State> posibleActions = n.State.PosibleActions();
             Node solution = null;
-            List<Node> posibleChildren = null;
+            List<Node> posibleChildren = new List<Node>();
             //Me fijo si alguno de sus hijos es la solucion
             foreach(KeyValuePair<object,State> action in posibleActions)
             {
-                var child = new Node(n, action.Value);
+                var child = new Node(n, action.Value, action.Key);
                 if(child.State.IsGoal()){
                     return child;
                 }

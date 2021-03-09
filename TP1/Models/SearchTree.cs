@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -17,13 +17,17 @@ namespace TP1.Models
         {
             public Node Parent { get; }
             public State State { get; set; }
+            public object Action { get; set; }
             
             public Node(Node parent, State state)
             {
                 Parent = parent;
                 State = state;
             }
-
+            public Node(Node parent, State state, object action) : this(parent, state)
+            {
+                Action = action;
+            }
         }
     }
 }

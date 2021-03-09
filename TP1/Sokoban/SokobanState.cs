@@ -20,7 +20,7 @@ namespace TP1.Sokoban
             this.boxes = boxes.ToArray();
         }
 
-        public bool IsValidAction(object action, out State next)
+        public bool IsValidAction(object action, out SokobanState next)
         {
             Point nextPos = new Point(Player.X, Player.Y);
             Point nextAfterPos = new Point(Player.X, Player.Y);
@@ -75,9 +75,9 @@ namespace TP1.Sokoban
 
         public IDictionary<object, State> PosibleActions()
         {
-            Dictionary<object, State> dict = new Dictionary<object, State>();
-            foreach (var action in Enum.GetValues(typeof(SokobanActions)))
-                if (IsValidAction(action, out State next))
+            var dict = new Dictionary<object, State>();
+            foreach (SokobanActions action in Enum.GetValues(typeof(SokobanActions)))
+                if (IsValidAction(action, out SokobanState next))
                     dict.Add(action, next);
 
             return dict;

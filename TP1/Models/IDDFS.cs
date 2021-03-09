@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -32,7 +32,7 @@ namespace TP1.Models
             foreach(KeyValuePair<object,State> action in posibleActions)
             {
                 //Busco la solucion a partir de los estados siguientes.
-                solution = searchSolution(new Node(n, action.Value), currentDepth + 1, depthLimit, statesCache);
+                solution = searchSolution(new Node(n, action.Value, action.Key), currentDepth + 1, depthLimit, statesCache);
                 //Si obtuve una solucion, dejo de buscar para retornarla.
                 if (solution != null) break;
             }
