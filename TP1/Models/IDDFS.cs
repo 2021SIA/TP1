@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace TP1.Models
@@ -12,63 +13,67 @@ namespace TP1.Models
             StartingDepth = startingDepth;
         }
 
-        private Node searchSolution(Node n, int currentDepth, int depthLimit, HashSet<State> statesCache)
+        private (Node n, int depth) searchSolution(int depthLimit)
         {
-            //Si llego a la profundidad limite o es un estado repetido, retorno null.
-            if(currentDepth > depthLimit || statesCache.Contains(n.State))
+            HashSet<State> statesCache = new HashSet<State>();
+            Stack<(Node n,int depth)> searchStack = new Stack<(Node n,int depth)>();
+            searchStack.Push((Root,0));
+
+            (Node n, int depth) solution = (null, -1), currentNode;
+            //Busco una solucion hasta que el stack quede vacio (se llego al limite de profundidad)
+            while (solution.n == null && searchStack.Count > 0)
             {
-                return null;
-            }
-            //Si llego a un estado que es solucion, retorno el nodo.
-            else if (n.State.IsGoal())
-            {
-                return n;
-            }
-            //Agrego el estado al cache para verificar estados repetidos.
-            statesCache.Add(n.State);
-            //Obtengo las posibles acciones a partir del estado actual.
-            IDictionary<object, State> posibleActions = n.State.PosibleActions();
-            Node solution = null;
-            foreach(KeyValuePair<object,State> action in posibleActions)
-            {
-                //Busco la solucion a partir de los estados siguientes.
-                solution = searchSolution(new Node(n, action.Value, action.Key), currentDepth + 1, depthLimit, statesCache);
-                //Si obtuve una solucion, dejo de buscar para retornarla.
-                if (solution != null) break;
+                currentNode = searchStack.Pop();
+                //Si se llego al limite de profundidad o es un estado repetido, no lo sigo expandiendo.
+                if (currentNode.depth > depthLimit || statesCache.Contains(currentNode.n.State))
+                {
+                    continue;
+                }
+                else if (currentNode.n.State.IsGoal())
+                {
+                    solution = currentNode;
+                }
+                //Agrego el estado al cache para verificar estados repetidos.
+                statesCache.Add(currentNode.n.State);
+                //Obtengo las posibles acciones a partir del estado actual y las agrego al stack de busqueda.
+                IDictionary<object, State> posibleActions = currentNode.n.State.PosibleActions();
+                foreach (KeyValuePair<object, State> action in posibleActions)
+                {
+                    searchStack.Push((new Node(currentNode.n, action.Value, action.Key),currentNode.depth + 1));
+                }
             }
             return solution;
         }
         public override Node GetSolution()
         {
             int currentDepthLimit = StartingDepth, topLimit = StartingDepth, bottomLimit = 0;
-            bool foundSolution = false;
-            Node solution = null;
-            HashSet<State> statesCache = new HashSet<State>();
-
-            //Busco una solucion hasta converger en la solucion optima.
-            while (topLimit != bottomLimit)
+            (Node n, int depth) solution;
+            Node optimalSolution = null;
+            do
             {
-                //Busco la solucion a partir de la raiz.
-                solution = searchSolution(Root, 0, currentDepthLimit, statesCache);
-
+                //Busco la solucion con el limite de profundidad actual.
+                solution = searchSolution(currentDepthLimit);
                 //Si encuentro una solucion, obtengo el limite superior en el cual se puede encontrar la solucion optima.
-                if (solution != null)
+                if (solution.n != null)
                 {
-                    foundSolution = true;
-                    topLimit = currentDepthLimit;
+                    optimalSolution = solution.n;
+                    topLimit = solution.depth;
                     currentDepthLimit -= (topLimit - bottomLimit) / 2;
                 }
-                //Si no encuentro una solucion, obtengo el limite inferior en el cual se puede encontrar la solucion optima.wsd
+                //Si no encuentro una solucion, obtengo el limite inferior en el cual se puede encontrar la solucion optima.
                 else
                 {
                     bottomLimit = currentDepthLimit;
-                    if (foundSolution)
+                    if (optimalSolution != null)
                         currentDepthLimit += (topLimit - bottomLimit) / 2;
                     else
-                        topLimit = currentDepthLimit = currentDepthLimit * 2;
+                        topLimit = currentDepthLimit = currentDepthLimit + StartingDepth;
                 }
-            }
-            return solution;
+
+            //Busco una solucion hasta converger en la solucion optima.
+            } while (topLimit - 1 > bottomLimit);
+
+            return optimalSolution;
         }
     }
 }

@@ -9,8 +9,8 @@ namespace TP1
     {
         static void Main(string[] args)
         {
-            var game = SokobanFactory.FromFile("Maps/example1.txt");
-            var search = new DFS(game);
+            var game = SokobanFactory.FromFile("Maps/example3.txt");
+            var search = new IDDFS(10,game);
             var solution = search.GetSolution();
 
             List<SokobanActions> actions = new List<SokobanActions>();

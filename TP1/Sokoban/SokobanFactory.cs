@@ -23,6 +23,7 @@ namespace TP1.Sokoban
                 {
                     pos.X = 0;
                     pos.Y++;
+                    continue;
                 }
                 switch (c)
                 {
@@ -51,8 +52,7 @@ namespace TP1.Sokoban
                     case '_':
                         break;
                 }
-                if (c != '\r')
-                    pos.X++;
+                pos.X++;
             }
             var map = new SokobanState.SokobanMap(walls, goals);
             var state = new SokobanState(map, player, boxes);
