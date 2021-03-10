@@ -20,7 +20,7 @@ namespace TP1.Models
                 {
                     continue;
                 }
-                else if (currentNode.State.IsGoal())
+                else if (currentNode.State.IsGoal)
                 {
                     return currentNode;
                 }

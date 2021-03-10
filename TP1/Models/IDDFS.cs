@@ -29,7 +29,7 @@ namespace TP1.Models
                 {
                     continue;
                 }
-                else if (currentNode.n.State.IsGoal())
+                else if (currentNode.n.State.IsGoal)
                 {
                     solution = currentNode;
                 }

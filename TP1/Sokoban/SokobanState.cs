@@ -68,9 +68,9 @@ namespace TP1.Sokoban
             }
         }
         
-        public bool IsGoal()
+        public bool IsGoal
         {
-            return boxes.All(box => Map.Objectives.Contains(box));
+            get => boxes.All(box => Map.Objectives.Contains(box));
         }
 
         public IDictionary<object, State> PosibleActions()
