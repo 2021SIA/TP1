@@ -12,10 +12,10 @@ namespace TP1.Models
             //Obtengo las posibles acciones a partir del estado actual.
             IDictionary<object, State> posibleActions = null;
             Node solution = null;
-            Node currentNode = null
+            Node currentNode = null;
             while(searchStack.Count > 0)
             {
-                currentNode = searchStack.Pop()
+                currentNode = searchStack.Pop();
                 if (statesCache.Contains(currentNode.State))
                 {
                     continue;
