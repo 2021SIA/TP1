@@ -7,50 +7,50 @@ namespace TP1.Models
     public class DFS : SearchTree
     {   
         public DFS(State root) : base(root) { }
-        private Node searchSolution(Node n, HashSet<State> statesCache)
+        private Node searchSolution(HashSet<State> statesCache, Stack<Node> searchStack)
         {
             //Obtengo las posibles acciones a partir del estado actual.
-            IDictionary<object, State> posibleActions = n.State.PosibleActions();
+            IDictionary<object, State> posibleActions = null;
             Node solution = null;
-            List<Node> posibleChildren = new List<Node>();
-            //Me fijo si alguno de sus hijos es la solucion
-            foreach(KeyValuePair<object,State> action in posibleActions)
+            Node currentNode = null
+            while(searchStack.Count > 0)
             {
-                var child = new Node(n, action.Value, action.Key);
-                if(child.State.IsGoal()){
-                    return child;
-                }
-                // si no lo es, y no es un estado repetido lo agrega a posible children
-                else if(!statesCache.Contains(child.State))
+                currentNode = searchStack.Pop()
+                if (statesCache.Contains(currentNode.State))
                 {
-                    posibleChildren.Add(child);
-                    statesCache.Add(child.State);
+                    continue;
+                }
+                else if (currentNode.State.IsGoal())
+                {
+                    return currentNode;
+                }
+                statesCache.Add(currentNode.State);
+                posibleActions = currentNode.State.PosibleActions();
+                
+                foreach(KeyValuePair<object,State> action in posibleActions)
+                {
+                    var child = new Node(currentNode, action.Value, action.Key);
+                    // si no es un estado repetido lo agrega al stack
+                    if(!statesCache.Contains(child.State))
+                    {
+                        searchStack.Push(child);
+                    }
                 }
             }
             
-            foreach(Node child in posibleChildren)
-            {
-                //Busco la solucion a partir de los estados siguientes.
-                solution = searchSolution(child, statesCache);
-                //Si obtuve una solucion, dejo de buscar para retornarla.
-                if (solution != null) break;
-            }
             return solution;
         }
         public override Node GetSolution()
         {
             Node solution = null;
             HashSet<State> statesCache = new HashSet<State>();
-
-            if (Root.State.IsGoal())
-            {
-                return Root;
-            }
+            Stack<Node> searchStack = new Stack<Node>();
+            
             //Agrego el estado al cache para verificar estados repetidos.
-            statesCache.Add(Root.State);
-
+            searchStack.Push(Root);
+            
             //Busco la solucion a partir de la raiz.
-            solution = searchSolution(Root, statesCache);
+            solution = searchSolution(statesCache, searchStack);
             return solution;
         }
     }
