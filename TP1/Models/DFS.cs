@@ -16,7 +16,7 @@ namespace TP1.Models
             while(searchStack.Count > 0)
             {
                 currentNode = searchStack.Pop();
-                if (statesCache.Contains(currentNode.State) || currentNode.State.IsDead())
+                if (statesCache.Contains(currentNode.State))
                 {
                     continue;
                 }
@@ -31,7 +31,7 @@ namespace TP1.Models
                 {
                     var child = new Node(currentNode, action.Value, action.Key);
                     // si no es un estado repetido ni muerto lo agrega al stack
-                    if(!statesCache.Contains(child.State) && !child.State.IsDead())
+                    if(!statesCache.Contains(child.State) )
                     {
                         searchStack.Push(child);
                     }
