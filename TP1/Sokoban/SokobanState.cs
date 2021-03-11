@@ -72,6 +72,32 @@ namespace TP1.Sokoban
         {
             get => boxes.All(Map.Objectives.Contains);
         }
+        public bool IsDead()
+        {
+            
+            foreach(Point box in boxes){
+                // chequea esquina arriba a la derecha
+                if(Map.Walls.Contains(new Point(box.X+1, box.Y)) && Map.Walls.Contains(new Point(box.X, box.Y -1))){
+                    return true;
+                }
+                //chequea izquierda arriba
+                else if(Map.Walls.Contains(new Point(box.X-1, box.Y)) && Map.Walls.Contains(new Point(box.X, box.Y -1))){
+                    return true;
+                }
+                //chequea izquierda abajo
+                else if(Map.Walls.Contains(new Point(box.X-1, box.Y)) && Map.Walls.Contains(new Point(box.X, box.Y +1))){
+                    return true;
+                }
+                //chequea derecha abajo
+                else if(Map.Walls.Contains(new Point(box.X+1, box.Y)) && Map.Walls.Contains(new Point(box.X, box.Y +1))){
+                    return true;
+                }
+            }
+            
+            return false;
+        }
+
+        
 
         public IDictionary<object, State> PosibleActions()
         {

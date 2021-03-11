@@ -8,5 +8,7 @@ namespace TP1.Models
     {
         IDictionary<object, State> PosibleActions();
         bool IsGoal { get; }
+
+        bool IsDead();
     }
 }
