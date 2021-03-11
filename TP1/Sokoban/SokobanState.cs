@@ -22,8 +22,8 @@ namespace TP1.Sokoban
 
         public bool IsValidAction(object action, out SokobanState next)
         {
-            Point nextPos = new Point(Player.X, Player.Y);
-            Point nextAfterPos = new Point(Player.X, Player.Y);
+            Point nextPos, nextAfterPos;
+            nextPos = nextAfterPos = Player;
             switch ((SokobanActions)action)
             {
                 case SokobanActions.Up:
@@ -70,7 +70,7 @@ namespace TP1.Sokoban
         
         public bool IsGoal
         {
-            get => boxes.All(box => Map.Objectives.Contains(box));
+            get => boxes.All(Map.Objectives.Contains);
         }
 
         public IDictionary<object, State> PosibleActions()
@@ -85,46 +85,40 @@ namespace TP1.Sokoban
 
         public override bool Equals(object obj)
         {
-            if(obj == this)
-            {
-                return true;
+            return this == obj ||
+                obj is SokobanState state &&
+                Map == state.Map &&
+                Player == state.Player &&
+                boxes.All(state.boxes.Contains);
             }
-            return obj is SokobanState other && 
-                this.Map.Equals(other.Map) && 
-                Player.Equals(other.Player) && 
-                boxes.All(other.boxes.Contains);
-        }
+
         public override int GetHashCode()
         {
-            return HashCode.Combine(Map, Player, boxes.Aggregate(17, (sum, b) => sum + 23 * b.GetHashCode()));
+            return HashCode.Combine(Player, boxes.Aggregate(17, (sum, b) => unchecked (sum * 23 + b.GetHashCode())));
         }
 
         public class SokobanMap
         {
-            public IEnumerable<Point> Walls { get => walls; }
-            public IEnumerable<Point> Objectives { get => objectives; }
-
-            HashSet<Point> walls;
-            List<Point> objectives;
+            public IEnumerable<Point> Walls { get; }
+            public IEnumerable<Point> Objectives { get; }
 
             public SokobanMap(IEnumerable<Point> walls, IEnumerable<Point> objectives)
             {
-                this.walls = new HashSet<Point>(walls);
-                this.objectives = new List<Point>(objectives);
+                Walls = new HashSet<Point>(walls);
+                Objectives = new List<Point>(objectives);
             }
 
             public override bool Equals(object obj)
             {
-                if (obj == this)
-                {
-                    return true;
-                }
-                return obj is SokobanMap other && walls.All(other.walls.Contains) && objectives.All(other.objectives.Contains);
+                return this == obj ||
+                    obj is SokobanMap map &&
+                    Walls.All(map.Walls.Contains) &&
+                    Objectives.All(map.Objectives.Contains);
             }
 
             public override int GetHashCode()
             {
-                return HashCode.Combine(walls.Aggregate(17, (sum, w) => sum + 23 * w.GetHashCode()), objectives.Aggregate(17, (sum, o) => sum + 23 * o.GetHashCode()));
+                return HashCode.Combine(Walls.Aggregate(17, (sum, w) => sum + 23 * w.GetHashCode()), Objectives.Aggregate(17, (sum, o) => sum + 23 * o.GetHashCode()));
             }
         }
     }

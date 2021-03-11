@@ -17,6 +17,11 @@ namespace TP1
             var solution = search.GetSolution();
             sw.Stop();
 
+            if(solution == null)
+            {
+                Console.WriteLine("No solution");
+                return;
+            }
             List<SokobanActions> actions = new List<SokobanActions>();
             while(solution.Parent != null)
             {
