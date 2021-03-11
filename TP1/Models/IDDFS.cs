@@ -15,7 +15,7 @@ namespace TP1.Models
 
         private (Node n, int depth) searchSolution(int depthLimit)
         {
-            HashSet<State> statesCache = new HashSet<State>();
+            IDictionary<State, int> statesCache = new Dictionary<State, int>();
             Stack<(Node n,int depth)> searchStack = new Stack<(Node n,int depth)>();
             searchStack.Push((Root,0));
 
@@ -25,7 +25,7 @@ namespace TP1.Models
             {
                 currentNode = searchStack.Pop();
                 //Si se llego al limite de profundidad o es un estado repetido, no lo sigo expandiendo.
-                if (currentNode.depth > depthLimit || statesCache.Contains(currentNode.n.State))
+                if (currentNode.depth > depthLimit || (statesCache.TryGetValue(currentNode.n.State,out int repeatedDepth) && repeatedDepth <= currentNode.depth))
                 {
                     continue;
                 }
@@ -34,7 +34,7 @@ namespace TP1.Models
                     solution = currentNode;
                 }
                 //Agrego el estado al cache para verificar estados repetidos.
-                statesCache.Add(currentNode.n.State);
+                statesCache[currentNode.n.State] = currentNode.depth;
                 //Obtengo las posibles acciones a partir del estado actual y las agrego al stack de busqueda.
                 IDictionary<object, State> posibleActions = currentNode.n.State.PosibleActions();
                 foreach (KeyValuePair<object, State> action in posibleActions)
@@ -51,6 +51,7 @@ namespace TP1.Models
             Node optimalSolution = null;
             do
             {
+                Console.WriteLine($"Current Depth Limit: {currentDepthLimit}");
                 //Busco la solucion con el limite de profundidad actual.
                 solution = searchSolution(currentDepthLimit);
                 //Si encuentro una solucion, obtengo el limite superior en el cual se puede encontrar la solucion optima.
@@ -58,17 +59,19 @@ namespace TP1.Models
                 {
                     optimalSolution = solution.n;
                     topLimit = solution.depth;
-                    currentDepthLimit -= (topLimit - bottomLimit) / 2;
                 }
                 //Si no encuentro una solucion, obtengo el limite inferior en el cual se puede encontrar la solucion optima.
                 else
                 {
                     bottomLimit = currentDepthLimit;
-                    if (optimalSolution != null)
-                        currentDepthLimit += (topLimit - bottomLimit) / 2;
-                    else
+                    //Si no encontre nunca una solucion todavia, aumento el limite de profundidad y vuelvo a intentar de vuelta.
+                    if (optimalSolution == null)
+                    {
                         topLimit = currentDepthLimit = currentDepthLimit + StartingDepth;
+                        continue;
+                    }
                 }
+                currentDepthLimit = bottomLimit + (topLimit - bottomLimit) / 2;
 
             //Busco una solucion hasta converger en la solucion optima.
             } while (topLimit - 1 > bottomLimit);
