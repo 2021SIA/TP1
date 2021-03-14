@@ -18,20 +18,27 @@ namespace TP1.Models
             IDictionary<State, int> statesCache = new Dictionary<State, int>();
             Stack<(Node n, int depth)> searchStack = new Stack<(Node n, int depth)>();
 
-            int expandedNodes = 0, currentLimit = heuristic(Root), newLimit;
+            int expandedNodes = 0;
+            double currentLimit = heuristic(Root), newLimit;
             (Node n, int depth) solution = (null, -1), currentNode;
 
             while (solution.n == null)
             {
                 newLimit = -1;
                 searchStack.Push((Root, 0));
+                statesCache.Clear();
                 //Busco una solucion hasta que el stack quede vacio (se llego al limite)
                 while (searchStack.Count > 0)
                 {
                     currentNode = searchStack.Pop();
-                    int heuristicValue = heuristic(currentNode.n);
-                    //Si se llego al limite o es un estado repetido, no lo sigo expandiendo.
-                    if (currentNode.depth + heuristicValue > currentLimit || (statesCache.TryGetValue(currentNode.n.State, out int repeatedDepth) && repeatedDepth <= currentNode.depth))
+                    //Si es un estado repetido no lo expando.
+                    if(statesCache.TryGetValue(currentNode.n.State, out int repeatedDepth) && repeatedDepth <= currentNode.depth)
+                    {
+                        continue;
+                    }
+                    double heuristicValue = heuristic(currentNode.n);
+                    //Si se llego al limite de la heuristica, obtengo el nuevo limite.
+                    if (currentNode.depth + heuristicValue > currentLimit)
                     {
                         //Guardo el nuevo limite para la siguiente iteracion en caso de que no se encuentre solucion.
                         if (newLimit == -1 || currentNode.depth + heuristicValue < newLimit)
