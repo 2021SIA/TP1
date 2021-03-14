@@ -1,0 +1,67 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace TP1.Models
+{
+    public class IDA : SearchTree
+    {
+        HeuristicFunction heuristic;
+
+        public IDA(State root, HeuristicFunction heuristic) : base(root)
+        {
+            this.heuristic = heuristic;
+        }
+
+        public override Node GetSolution()
+        {
+            IDictionary<State, int> statesCache = new Dictionary<State, int>();
+            Stack<(Node n, int depth)> searchStack = new Stack<(Node n, int depth)>();
+
+            int expandedNodes = 0, currentLimit = heuristic(Root), newLimit;
+            (Node n, int depth) solution = (null, -1), currentNode;
+
+            while (solution.n == null)
+            {
+                newLimit = -1;
+                searchStack.Push((Root, 0));
+                //Busco una solucion hasta que el stack quede vacio (se llego al limite)
+                while (searchStack.Count > 0)
+                {
+                    currentNode = searchStack.Pop();
+                    int heuristicValue = heuristic(currentNode.n);
+                    //Si se llego al limite o es un estado repetido, no lo sigo expandiendo.
+                    if (currentNode.depth + heuristicValue > currentLimit || (statesCache.TryGetValue(currentNode.n.State, out int repeatedDepth) && repeatedDepth <= currentNode.depth))
+                    {
+                        //Guardo el nuevo limite para la siguiente iteracion en caso de que no se encuentre solucion.
+                        if (newLimit == -1 || currentNode.depth + heuristicValue < newLimit)
+                        {
+                            newLimit = currentNode.depth + heuristicValue;
+                        }
+                    }
+                    //Si encuentro una solucion, termino la busqueda.
+                    else if (currentNode.n.State.IsGoal)
+                    {
+                        solution = currentNode;
+                        break;
+                    }
+                    else
+                    {
+                        //Agrego el estado al cache para verificar estados repetidos.
+                        statesCache[currentNode.n.State] = currentNode.depth;
+                        //Obtengo las posibles acciones a partir del estado actual y las agrego al stack de busqueda.
+                        IDictionary<object, State> posibleActions = currentNode.n.State.PosibleActions();
+                        foreach (KeyValuePair<object, State> action in posibleActions)
+                        {
+                            searchStack.Push((new Node(currentNode.n, action.Value, action.Key), currentNode.depth + 1));
+                        }
+                        //Aumento la cantidad de nodos expandidos.
+                        expandedNodes++;
+                    }
+                }
+                currentLimit = newLimit;
+            }
+            return solution.n;
+        }
+    }
+}
