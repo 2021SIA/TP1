@@ -11,7 +11,7 @@ namespace TP1
         static void Main(string[] args)
         {
             var game = SokobanFactory.FromFile("Maps/8x8.txt");
-            var search = new BFS(game);
+            var search = new GGS(game, SokobanHeuristics.Heuristic1);
             var sw = new Stopwatch();
             sw.Start();
             var solution = search.GetSolution();
@@ -40,7 +40,8 @@ namespace TP1
             }
             foreach(SokobanState stat in states)
             {
-                stat.ToString();
+                stat.toString();
+                Console.Write('\n');
                 Console.Write('\n');
             }
         }

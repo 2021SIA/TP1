@@ -96,8 +96,7 @@ namespace TP1.Sokoban
             
             return false;
         }
-        
-        public void ToString(){
+        public void toString(){
             int maxX = 0;
             int maxY = 0;
             foreach( Point wall in Map.Walls)
