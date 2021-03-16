@@ -96,8 +96,48 @@ namespace TP1.Sokoban
             
             return false;
         }
-
         
+        public void ToString(){
+            int maxX = 0;
+            int maxY = 0;
+            foreach( Point wall in Map.Walls)
+            {
+                if(wall.X > maxX) maxX = wall.X;
+                if(wall.Y >maxY) maxY = wall.Y;
+            }
+            string [,] state = new string[maxY+1, maxX+1];
+            state[Player.Y, Player.X] = "@";
+            foreach( Point wall in Map.Walls)
+            {
+                state[wall.Y, wall.X]= "#";
+            }
+            foreach( Point objective in Map.Objectives)
+            {
+                if(objective == Player)
+                    state[objective.Y, objective.X]= "+";
+                else 
+                    state[objective.Y, objective.X]= ".";
+            }
+            foreach( Point box in Boxes)
+            {
+                if(state[box.Y, box.X] == ".")
+                    state[box.Y, box.X]= "*";
+                else 
+                    state[box.Y, box.X]= "$";
+            }
+            int rowLength = state.GetLength(0);
+            int colLength = state.GetLength(1);
+
+            for (int i = 0; i < rowLength; i++)
+            {
+                for (int j = 0; j < colLength; j++)
+                {
+                    Console.Write(string.Format("{0} ", state[i, j]));
+                }
+                Console.Write(Environment.NewLine + Environment.NewLine);
+            }
+            // Console.ReadLine();
+        }
 
         public IDictionary<object, State> PosibleActions()
         {
@@ -141,7 +181,7 @@ namespace TP1.Sokoban
                     Walls.All(map.Walls.Contains) &&
                     Objectives.All(map.Objectives.Contains);
             }
-
+           
             public override int GetHashCode()
             {
                 return HashCode.Combine(Walls.Aggregate(17, (sum, w) => sum + 23 * w.GetHashCode()), Objectives.Aggregate(17, (sum, o) => sum + 23 * o.GetHashCode()));
