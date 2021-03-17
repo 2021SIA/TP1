@@ -26,13 +26,13 @@ namespace TP1.Models
             IDictionary<object, State> posibleActions = null;
             Node solution = null;
             Leaf currentLeaf = null;
-            currentLeaf = new Leaf() { node = Root, h = heuristic(Root) };
+            currentLeaf = new Leaf() { node = Root, h = heuristic(Root.State) };
             searchList.Add(currentLeaf);
             statesCache.Add(currentLeaf.node.State);
             while(solution ==  null)
             {
                 if (!searchList.Any()){
-                    Console.WriteLine("there is no solution");
+                    //Console.WriteLine("there is no solution");
                     return null;
                 }
                 else if (currentLeaf.node.State.IsGoal)
@@ -50,8 +50,8 @@ namespace TP1.Models
                     // si no es un estado repetido ni muerto lo agrega al stack
                     if(!statesCache.Contains(child.State) && !currentLeaf.node.State.IsDead() )
                     {
-                        Console.WriteLine("adding leaf");
-                        var child_heuristic = currentLeaf.h + heuristic(child);
+                        //Console.WriteLine("adding leaf");
+                        var child_heuristic = currentLeaf.h + heuristic(child.State);
                         var child_leaf = new Leaf() { node = child, h = child_heuristic};
                         searchList.Add(child_leaf);
                         statesCache.Add(currentLeaf.node.State);
