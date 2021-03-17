@@ -10,7 +10,7 @@ namespace TP1
     {
         static void Main(string[] args)
         {
-            var game = SokobanFactory.FromFile("Maps/imposible.txt");
+            var game = SokobanFactory.FromFile("Maps/8x8-6.txt");
             var search = new GGS(game, SokobanHeuristics.Heuristic1);
             var sw = new Stopwatch();
             sw.Start();
@@ -22,6 +22,7 @@ namespace TP1
                 Console.WriteLine("No solution");
                 return;
             }
+            int i = 0;
             List<SokobanState> states = new List<SokobanState>();
             List<SokobanActions> actions = new List<SokobanActions>();
             while(solution.Parent != null)
@@ -29,10 +30,11 @@ namespace TP1
                 actions.Add((SokobanActions)solution.Action);
                 states.Add((SokobanState)solution.State);
                 solution = solution.Parent;
+                i += 1;
             }
             actions.Reverse();
             states.Reverse();
-            Console.WriteLine($"Solved in: {sw.ElapsedMilliseconds}ms");
+            Console.WriteLine($"Solved in: {sw.ElapsedMilliseconds}ms in {i} moves");
             foreach (var action in actions)
             {
                 Console.Write(action);
