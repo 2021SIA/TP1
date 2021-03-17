@@ -97,7 +97,7 @@ namespace TP1.Sokoban
             
             return false;
         }
-        public void toString(){
+        public override String ToString(){
             int maxX = 0;
             int maxY = 0;
             foreach( Point wall in Map.Walls)
@@ -128,15 +128,16 @@ namespace TP1.Sokoban
             int rowLength = state.GetLength(0);
             int colLength = state.GetLength(1);
 
+            string str = "";
             for (int i = 0; i < rowLength; i++)
             {
                 for (int j = 0; j < colLength; j++)
                 {
-                    Console.Write(string.Format("{0} ", state[i, j]));
+                    str += string.Format("{0}", state[i, j] != null ? state[i, j] : " ");
                 }
-                Console.Write(Environment.NewLine + Environment.NewLine);
+                str += "\n";
             }
-            // Console.ReadLine();
+            return str;
         }
 
         public IDictionary<object, State> PosibleActions()

@@ -40,9 +40,11 @@ namespace TP1
                 Console.Write(action);
                 Console.Write('\t');
             }
-            foreach(SokobanState stat in states)
+            Console.Write('\n');
+            foreach (State stat in states)
             {
-                stat.toString();
+                String stateStr = stat.ToString();
+                Console.Write(stateStr);
                 Console.Write('\n');
                 Console.Write('\n');
             }
