@@ -17,45 +17,50 @@ namespace TP1.Models
         {
             public Node node { get; set; }
             public double h { get; set; }
+            public int depth { get; set; }
         }
 
         public override Node GetSolution()
         {
-            HashSet<State> statesCache = new HashSet<State>();
+            IDictionary<State, int> statesCache = new Dictionary<State, int>();
             List<Leaf> searchList = new List<Leaf>();
             IDictionary<object, State> posibleActions = null;
             Node solution = null;
             Leaf currentLeaf = null;
-            currentLeaf = new Leaf() { node = Root, h = heuristic(Root.State) };
+            currentLeaf = new Leaf() { node = Root, h = heuristic(Root.State), depth = 0 };
             searchList.Add(currentLeaf);
-            statesCache.Add(currentLeaf.node.State);
-            while(solution ==  null)
+            statesCache.Add(currentLeaf.node.State, 0);
+            while(solution ==  null && searchList.Count > 0)
             {
-                if (!searchList.Any()){
-                    //Console.WriteLine("there is no solution");
-                    return null;
-                }
-                else if (currentLeaf.node.State.IsGoal)
+                if (currentLeaf.node.State.IsGoal)
                 {
-                    return currentLeaf.node;
+                   solution = currentLeaf.node;
                 }
-                currentLeaf = searchList[0];
-                searchList.RemoveAt(0);
-
-
-                posibleActions = currentLeaf.node.State.PosibleActions();
-                foreach(KeyValuePair<object,State> action in posibleActions)
+                else
                 {
-                    var child = new Node(currentLeaf.node, action.Value, action.Key);
-                    // si no es un estado repetido ni muerto lo agrega al stack
-                    if(!statesCache.Contains(child.State) && !currentLeaf.node.State.IsDead() )
+                    currentLeaf = searchList[0];
+                    searchList.RemoveAt(0);
+                    posibleActions = currentLeaf.node.State.PosibleActions();
+                    foreach (KeyValuePair<object, State> action in posibleActions)
                     {
-                        //Console.WriteLine("adding leaf");
-                        var child_heuristic = currentLeaf.h + heuristic(child.State);
-                        var child_leaf = new Leaf() { node = child, h = child_heuristic};
-                        searchList.Add(child_leaf);
-                        statesCache.Add(currentLeaf.node.State);
-                        searchList = searchList.OrderBy(leaf => leaf.h).ToList();
+                        var child = new Node(currentLeaf.node, action.Value, action.Key);
+                        if ((!statesCache.TryGetValue(child.State,out int repeatedDepth) || repeatedDepth > currentLeaf.depth) && !currentLeaf.node.State.IsDead())
+                        {
+                            var child_heuristic = heuristic(child.State);
+                            var child_leaf = new Leaf() { node = child, h = child_heuristic, depth = currentLeaf.depth + 1 };
+                            statesCache[currentLeaf.node.State] = currentLeaf.depth;
+                            bool added = false;
+                            for(int i = 0; i < searchList.Count; i++)
+                            {
+                                if(searchList[i].h > child_leaf.h)
+                                {
+                                    searchList.Insert(i, child_leaf);
+                                    added = true;
+                                    break;
+                                }
+                            }
+                            if (!added) { searchList.Add(child_leaf); }
+                        }
                     }
                 }
 
