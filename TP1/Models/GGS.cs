@@ -26,29 +26,28 @@ namespace TP1.Models
             List<Leaf> searchList = new List<Leaf>();
             IDictionary<object, State> posibleActions = null;
             Node solution = null;
-            Leaf currentLeaf = null;
-            currentLeaf = new Leaf() { node = Root, h = heuristic(Root.State), depth = 0 };
-            searchList.Add(currentLeaf);
-            statesCache.Add(currentLeaf.node.State, 0);
+            Leaf currentLeaf;
+            searchList.Add(new Leaf() { node = Root, h = heuristic(Root.State), depth = 0 });
+            statesCache.Add(searchList[0].node.State, 0);
             while(solution ==  null && searchList.Count > 0)
             {
+                currentLeaf = searchList[0];
+                searchList.RemoveAt(0);
                 if (currentLeaf.node.State.IsGoal)
                 {
                    solution = currentLeaf.node;
                 }
                 else
                 {
-                    currentLeaf = searchList[0];
-                    searchList.RemoveAt(0);
                     posibleActions = currentLeaf.node.State.PosibleActions();
                     foreach (KeyValuePair<object, State> action in posibleActions)
                     {
                         var child = new Node(currentLeaf.node, action.Value, action.Key);
-                        if ((!statesCache.TryGetValue(child.State,out int repeatedDepth) || repeatedDepth > currentLeaf.depth) && !currentLeaf.node.State.IsDead())
+                        if ((!statesCache.TryGetValue(child.State,out int repeatedDepth) || repeatedDepth > currentLeaf.depth + 1) && !child.State.IsDead())
                         {
                             var child_heuristic = heuristic(child.State);
                             var child_leaf = new Leaf() { node = child, h = child_heuristic, depth = currentLeaf.depth + 1 };
-                            statesCache[currentLeaf.node.State] = currentLeaf.depth;
+                            statesCache[child.State] = child_leaf.depth;
                             bool added = false;
                             for(int i = 0; i < searchList.Count; i++)
                             {
