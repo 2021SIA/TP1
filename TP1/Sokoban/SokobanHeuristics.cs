@@ -48,6 +48,7 @@ namespace TP1.Sokoban
             return min;
         }
 
+        //Heuristica que utiliza la distancia de las cajas al objetivo mas cercano.
         public static double Heuristic1(State s)
         {
             if (!(s is SokobanState state)) { return 0; }
@@ -67,11 +68,28 @@ namespace TP1.Sokoban
             }
             return total;
         }
+        //Heuristica que asigna cada caja a un unico objetivo, y obtiene la suma minima de las distancias.
         public static double Heuristic2(State s)
         {
             if (!(s is SokobanState state)) { return 0; }
+            int[,] distances = new int[state.Boxes.Count(), state.Map.Objectives.Count()];
+            for (int i = 0; i < state.Boxes.Count(); i++)
+            {
+                for (int j = 0; j < state.Map.Objectives.Count(); j++)
+                {
+                    Point box = state.Boxes.ElementAt(i);
+                    Point objective = state.Map.Objectives.ElementAt(j);
+                    distances[i, j] = Math.Abs(box.X - objective.X) + Math.Abs(box.Y - objective.Y);
+                }
+            }
+            return GetMinCost(distances);
+        }
+        //Heuristica que utiliza la distancia de las cajas al objetivo mas cercano, sumado a la distancia del jugador a la caja en juego mas cercana.
+        public static double Heuristic3(State s)
+        {
+            if (!(s is SokobanState state)) { return 0; }
             double total = 0;
-            double minDistance;
+            double minDistance, minPlayerDistance = -1;
             Point player = state.Player;
             foreach (Point box in state.Boxes)
             {
@@ -80,38 +98,23 @@ namespace TP1.Sokoban
                 {
                     int distX = box.X - objective.X;
                     int distY = box.Y - objective.Y;
-                    double dist = Math.Abs(distX) + Math.Abs(distY);
-                    if (dist > 0)
-                    {
-                        distX = box.X - player.X;
-                        distY = box.Y - player.Y;
-                        dist += Math.Abs(distX) + Math.Abs(distY);
-                    }
+                    int dist = Math.Abs(distX) + Math.Abs(distY);
                     if (minDistance == -1 || dist < minDistance) { minDistance = dist; }
+                }
+                if (minDistance > 0)
+                {
+                    int distX = box.X - player.X;
+                    int distY = box.Y - player.Y;
+                    int playerDist = Math.Abs(distX) + Math.Abs(distY);
+                    if (minPlayerDistance == -1 || playerDist < minPlayerDistance)
+                    {
+                        minPlayerDistance = playerDist;
+                    }
                 }
                 total += minDistance;
             }
+            total += minPlayerDistance;
             return total;
-        }
-        public static double Heuristic3(State s)
-        {
-            if (!(s is SokobanState state)) { return 0; }
-            int[,] distances = new int[state.Boxes.Count(), state.Map.Objectives.Count()];
-            Point player = state.Player;
-            for (int i = 0; i < state.Boxes.Count(); i++)
-            {
-                for (int j = 0; j < state.Map.Objectives.Count(); j++)
-                {
-                    Point box = state.Boxes.ElementAt(i);
-                    Point objective = state.Map.Objectives.ElementAt(j);
-                    distances[i, j] = Math.Abs(box.X - objective.X) + Math.Abs(box.Y - objective.Y);
-                    if (distances[i, j] > 0)
-                    {
-                        distances[i, j] += Math.Abs(box.X - player.X) + Math.Abs(box.Y - player.Y);
-                    }
-                }
-            }
-            return GetMinCost(distances);
         }
     }
 }
