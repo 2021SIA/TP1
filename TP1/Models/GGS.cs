@@ -25,15 +25,12 @@ namespace TP1.Models
             List<Leaf> searchList = new List<Leaf>();
             IDictionary<object, State> posibleActions = null;
             Node solution = null;
-            Leaf currentLeaf = new Leaf(){node = Root, h = heuristic(Root)};
-            
+            Leaf currentLeaf = null;
+            currentLeaf = new Leaf() { node = Root, h = heuristic(Root) };
             searchList.Add(currentLeaf);
             statesCache.Add(currentLeaf.node.State);
-
             while(solution ==  null)
             {
-                // fijo currentNode es el que tiene menor heuristica
-                currentLeaf = searchList[0];
                 if (!searchList.Any()){
                     Console.WriteLine("there is no solution");
                     return null;
@@ -42,7 +39,7 @@ namespace TP1.Models
                 {
                     return currentLeaf.node;
                 }
-
+                currentLeaf = searchList[0];
                 searchList.RemoveAt(0);
 
 

@@ -10,7 +10,7 @@ namespace TP1
     {
         static void Main(string[] args)
         {
-            var game = SokobanFactory.FromFile("Maps/8x8.txt");
+            var game = SokobanFactory.FromFile("Maps/imposible.txt");
             var search = new GGS(game, SokobanHeuristics.Heuristic1);
             var sw = new Stopwatch();
             sw.Start();
