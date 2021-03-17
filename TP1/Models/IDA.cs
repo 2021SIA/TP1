@@ -17,16 +17,17 @@ namespace TP1.Models
         {
             IDictionary<State, int> statesCache = new Dictionary<State, int>();
             Stack<(Node n, int depth)> searchStack = new Stack<(Node n, int depth)>();
-
+            Stack<(Node n, int depth)> frontier = new Stack<(Node n, int depth)>();
+            frontier.Push((Root,0));
             int expandedNodes = 0;
-            double currentLimit = heuristic(Root), newLimit;
+            double currentLimit = heuristic(Root.State), newLimit;
             (Node n, int depth) solution = (null, -1), currentNode;
 
             while (solution.n == null)
             {
                 newLimit = -1;
-                searchStack.Push((Root, 0));
                 statesCache.Clear();
+                while (frontier.Count > 0) searchStack.Push(frontier.Pop());
                 //Busco una solucion hasta que el stack quede vacio (se llego al limite)
                 while (searchStack.Count > 0)
                 {
@@ -36,7 +37,7 @@ namespace TP1.Models
                     {
                         continue;
                     }
-                    double heuristicValue = heuristic(currentNode.n);
+                    double heuristicValue = heuristic(currentNode.n.State);
                     //Si se llego al limite de la heuristica, obtengo el nuevo limite.
                     if (currentNode.depth + heuristicValue > currentLimit)
                     {
@@ -45,6 +46,7 @@ namespace TP1.Models
                         {
                             newLimit = currentNode.depth + heuristicValue;
                         }
+                        frontier.Push(currentNode);
                     }
                     //Si encuentro una solucion, termino la busqueda.
                     else if (currentNode.n.State.IsGoal)

@@ -76,6 +76,7 @@ namespace TP1.Sokoban
         {
             
             foreach(Point box in boxes){
+                if (Map.Objectives.Contains(box)) { continue; }
                 // chequea esquina arriba a la derecha
                 if(Map.Walls.Contains(new Point(box.X+1, box.Y)) && Map.Walls.Contains(new Point(box.X, box.Y -1))){
                     return true;

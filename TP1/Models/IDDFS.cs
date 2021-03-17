@@ -13,11 +13,11 @@ namespace TP1.Models
             StartingDepth = startingDepth;
         }
 
-        private (Node n, int depth) searchSolution(int depthLimit)
+        private (Node n, int depth) searchSolution(int depthLimit, Stack<(Node n, int depth)> frontier)
         {
             IDictionary<State, int> statesCache = new Dictionary<State, int>();
             Stack<(Node n,int depth)> searchStack = new Stack<(Node n,int depth)>();
-            searchStack.Push((Root,0));
+            while(frontier.Count > 0) searchStack.Push(frontier.Pop());
 
             (Node n, int depth) solution = (null, -1), currentNode;
             //Busco una solucion hasta que el stack quede vacio (se llego al limite de profundidad)
@@ -25,23 +25,27 @@ namespace TP1.Models
             {
                 currentNode = searchStack.Pop();
                 //Si se llego al limite de profundidad o es un estado repetido, no lo sigo expandiendo.
-                if (currentNode.depth > depthLimit || (statesCache.TryGetValue(currentNode.n.State,out int repeatedDepth) && repeatedDepth <= currentNode.depth))
+                if (currentNode.depth > depthLimit)
                 {
-                    continue;
+                    frontier.Push(currentNode);
                 }
                 else if (currentNode.n.State.IsGoal)
                 {
                     solution = currentNode;
                 }
-                //Agrego el estado al cache para verificar estados repetidos.
-                statesCache[currentNode.n.State] = currentNode.depth;
-                //Obtengo las posibles acciones a partir del estado actual y las agrego al stack de busqueda.
-                IDictionary<object, State> posibleActions = currentNode.n.State.PosibleActions();
-                foreach (KeyValuePair<object, State> action in posibleActions)
+                else if (!statesCache.TryGetValue(currentNode.n.State, out int repeatedDepth) || repeatedDepth > currentNode.depth)
                 {
-                    searchStack.Push((new Node(currentNode.n, action.Value, action.Key),currentNode.depth + 1));
+                    //Agrego el estado al cache para verificar estados repetidos.
+                    statesCache[currentNode.n.State] = currentNode.depth;
+                    //Obtengo las posibles acciones a partir del estado actual y las agrego al stack de busqueda.
+                    IDictionary<object, State> posibleActions = currentNode.n.State.PosibleActions();
+                    foreach (KeyValuePair<object, State> action in posibleActions)
+                    {
+                        searchStack.Push((new Node(currentNode.n, action.Value, action.Key), currentNode.depth + 1));
+                    }
                 }
             }
+            while (searchStack.Count > 0) frontier.Push(searchStack.Pop());
             return solution;
         }
         public override Node GetSolution()
@@ -49,11 +53,12 @@ namespace TP1.Models
             int currentDepthLimit = StartingDepth, topLimit = StartingDepth, bottomLimit = 0;
             (Node n, int depth) solution;
             Node optimalSolution = null;
+            Stack<(Node n, int depth)> frontier = new Stack<(Node n, int depth)>();
+            frontier.Push((Root, 0));
             do
             {
-                Console.WriteLine($"Current Depth Limit: {currentDepthLimit}");
                 //Busco la solucion con el limite de profundidad actual.
-                solution = searchSolution(currentDepthLimit);
+                solution = searchSolution(currentDepthLimit,frontier);
                 //Si encuentro una solucion, obtengo el limite superior en el cual se puede encontrar la solucion optima.
                 if (solution.n != null)
                 {

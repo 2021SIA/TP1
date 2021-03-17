@@ -6,7 +6,7 @@ namespace TP1.Models
 {
     public abstract class SearchTree
     {
-        public delegate double HeuristicFunction(Node n);
+        public delegate double HeuristicFunction(State s);
 
         public Node Root { get; private set; }
         protected SearchTree(State root)
