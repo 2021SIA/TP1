@@ -26,7 +26,10 @@ namespace TP1.Models
             {
                 current = heap.Min;
                 heap.Remove(current);
-
+                if (current.Node.State.IsGoal)
+                {
+                    break;
+                }
                 expanded++;
                 foreach(var action in current.Node.State.PosibleActions())
                 {
