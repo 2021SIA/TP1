@@ -7,12 +7,13 @@ namespace TP1.Models
     public class DFS : SearchTree
     {   
         public DFS(State root) : base(root) { }
-        private Node searchSolution(HashSet<State> statesCache, Stack<Node> searchStack)
+        private Node searchSolution(HashSet<State> statesCache, Stack<Node> searchStack, out int expanded)
         {
             //Obtengo las posibles acciones a partir del estado actual.
             IDictionary<object, State> posibleActions = null;
             Node solution = null;
             Node currentNode = null;
+            expanded = 0;
             while(searchStack.Count > 0)
             {
                 currentNode = searchStack.Pop();
@@ -26,7 +27,8 @@ namespace TP1.Models
                 }
                 statesCache.Add(currentNode.State);
                 posibleActions = currentNode.State.PosibleActions();
-                
+
+                expanded++;
                 foreach(KeyValuePair<object,State> action in posibleActions)
                 {
                     var child = new Node(currentNode, action.Value, action.Key);
@@ -40,7 +42,7 @@ namespace TP1.Models
             
             return solution;
         }
-        public override Node GetSolution()
+        public override Node GetSolution(out int expanded, out int frontier)
         {
             Node solution = null;
             HashSet<State> statesCache = new HashSet<State>();
@@ -50,7 +52,8 @@ namespace TP1.Models
             searchStack.Push(Root);
             
             //Busco la solucion a partir de la raiz.
-            solution = searchSolution(statesCache, searchStack);
+            solution = searchSolution(statesCache, searchStack, out expanded);
+            frontier = searchStack.Count;
             return solution;
         }
     }

@@ -13,7 +13,7 @@ namespace TP1.Models
         {
             Root = new Node(null, root);
         }
-        public abstract Node GetSolution();
+        public abstract Node GetSolution(out int expanded, out int frontier);
 
         public class Node
         {

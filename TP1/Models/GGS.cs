@@ -20,13 +20,15 @@ namespace TP1.Models
             public int depth { get; set; }
         }
 
-        public override Node GetSolution()
+        public override Node GetSolution(out int expanded, out int frontier)
         {
             IDictionary<State, int> statesCache = new Dictionary<State, int>();
             List<Leaf> searchList = new List<Leaf>();
             IDictionary<object, State> posibleActions = null;
             Node solution = null;
             Leaf currentLeaf;
+            expanded = 0;
+
             searchList.Add(new Leaf() { node = Root, h = heuristic(Root.State), depth = 0 });
             statesCache.Add(searchList[0].node.State, 0);
             while(solution ==  null && searchList.Count > 0)
@@ -39,6 +41,7 @@ namespace TP1.Models
                 }
                 else
                 {
+                    expanded++;
                     posibleActions = currentLeaf.node.State.PosibleActions();
                     foreach (KeyValuePair<object, State> action in posibleActions)
                     {
@@ -64,6 +67,7 @@ namespace TP1.Models
                 }
 
             }
+            frontier = searchList.Count;
             return solution;
         }
             

@@ -13,10 +13,11 @@ namespace TP1.Models
             StartingDepth = startingDepth;
         }
 
-        private (Node n, int depth) searchSolution(int depthLimit, Stack<(Node n, int depth)> frontier)
+        private (Node n, int depth) searchSolution(int depthLimit, Stack<(Node n, int depth)> frontier, out int expanded)
         {
             IDictionary<State, int> statesCache = new Dictionary<State, int>();
             Stack<(Node n,int depth)> searchStack = new Stack<(Node n,int depth)>();
+            expanded = 0;
             while(frontier.Count > 0) searchStack.Push(frontier.Pop());
 
             (Node n, int depth) solution = (null, -1), currentNode;
@@ -35,6 +36,7 @@ namespace TP1.Models
                 }
                 else if (!statesCache.TryGetValue(currentNode.n.State, out int repeatedDepth) || repeatedDepth > currentNode.depth)
                 {
+                    expanded++;
                     //Agrego el estado al cache para verificar estados repetidos.
                     statesCache[currentNode.n.State] = currentNode.depth;
                     //Obtengo las posibles acciones a partir del estado actual y las agrego al stack de busqueda.
@@ -48,17 +50,20 @@ namespace TP1.Models
             while (searchStack.Count > 0) frontier.Push(searchStack.Pop());
             return solution;
         }
-        public override Node GetSolution()
+        public override Node GetSolution(out int expanded, out int frontierCount)
         {
             int currentDepthLimit = StartingDepth, topLimit = StartingDepth, bottomLimit = 0;
             (Node n, int depth) solution;
             Node optimalSolution = null;
             Stack<(Node n, int depth)> frontier = new Stack<(Node n, int depth)>();
+            expanded = 0;
+
             frontier.Push((Root, 0));
             do
             {
                 //Busco la solucion con el limite de profundidad actual.
-                solution = searchSolution(currentDepthLimit,frontier);
+                solution = searchSolution(currentDepthLimit,frontier, out int expandedLast);
+                expanded += expandedLast;
                 //Si encuentro una solucion, obtengo el limite superior en el cual se puede encontrar la solucion optima.
                 if (solution.n != null)
                 {
@@ -81,6 +86,7 @@ namespace TP1.Models
             //Busco una solucion hasta converger en la solucion optima.
             } while (topLimit - 1 > bottomLimit);
 
+            frontierCount = frontier.Count;
             return optimalSolution;
         }
     }

@@ -13,32 +13,33 @@ namespace TP1.Models
             Heuristic = heuristic;
         }
 
-        public override Node GetSolution()
+        public override Node GetSolution(out int expanded, out int frontier)
         {
-            var explored = new HashSet<State>();
             var found = new HashSet<State>();
             var heap = new SortedSet<NodePair>(new NodeComparer(Heuristic));
+            NodePair current = null;
+            expanded = 0;
 
             heap.Add(new (Root, 0));
+            found.Add(Root.State);
             while(heap.Count > 0)
             {
-                NodePair current = heap.Min;
+                current = heap.Min;
                 heap.Remove(current);
-                explored.Add(current.Node.State);
-                if (current.Node.State.IsGoal)
-                    return current.Node;
 
+                expanded++;
                 foreach(var action in current.Node.State.PosibleActions())
                 {
                     Node child = new(current.Node, action.Value, action.Key);
-                    if (!explored.Contains(child.State) && !found.Contains(child.State))
+                    if (!found.Contains(child.State))
                     {
                         found.Add(child.State);
                         heap.Add(new(child, current.Depth + 1));
                     }
                 }
             }
-            return null;
+            frontier = heap.Count;
+            return current?.Node;
         }
 
         private record NodePair

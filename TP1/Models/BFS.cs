@@ -7,25 +7,29 @@ namespace TP1.Models
     public class BFS : SearchTree
     {
         public BFS(State root) : base(root) { }
-        public override Node GetSolution()
+        public override Node GetSolution(out int expanded, out int frontier)
         {
             var queue = new Queue<(Node node, int depth)>();
             var explored = new HashSet<State>();
             int currentDepth = 0;
+            expanded = 0;
+            Node current = null;
 
             queue.Enqueue((Root, 0));
             while(queue.Count > 0)
             {
-                (Node current, int depth) = queue.Dequeue();
+                int depth;
+                (current, depth) = queue.Dequeue();
                 explored.Add(current.State);
                 if(depth > currentDepth)
                 {
                     currentDepth = depth;
-                    Console.WriteLine($"Current depth: {currentDepth}");
+                    //Console.WriteLine($"Current depth: {currentDepth}");
                 }
                 if (current.State.IsGoal)
-                    return current;
+                    break;
 
+                expanded++;
                 foreach(var action in current.State.PosibleActions())
                 {
                     Node child = new Node(current, action.Value, action.Key);
@@ -33,7 +37,8 @@ namespace TP1.Models
                         queue.Enqueue((child, depth+1));
                 }
             }
-            return null;
+            frontier = queue.Count;
+            return current;
         }
     }
 }

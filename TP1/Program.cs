@@ -16,7 +16,7 @@ namespace TP1
             BFS, DFS, IDDFS, GGS, IDAStar, AStar
         }
 
-        static void Main(FileInfo map, bool show, Algorithms strategy, int heuristic, int depth = 0)
+        static void Main(FileInfo map, bool show, Algorithms strategy, int heuristic = 1, int depth = 30)
         {
             var game = SokobanFactory.FromFile(map.FullName);
 
@@ -66,6 +66,8 @@ namespace TP1
             states.Reverse();
             Console.WriteLine($"Solved in {sw.ElapsedMilliseconds}ms");
             Console.WriteLine($"Moves: {actions.Count}");
+            Console.WriteLine($"Nodes expanded: {expanded}");
+            Console.WriteLine($"Nodes in frontier: {frontier}");
             Console.WriteLine("Solution:");
             foreach (var action in actions)
             {

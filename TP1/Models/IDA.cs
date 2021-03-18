@@ -13,13 +13,13 @@ namespace TP1.Models
             this.heuristic = heuristic;
         }
 
-        public override Node GetSolution()
+        public override Node GetSolution(out int expandedNodes, out int frontierCount)
         {
             IDictionary<State, int> statesCache = new Dictionary<State, int>();
             Stack<(Node n, int depth)> searchStack = new Stack<(Node n, int depth)>();
             Stack<(Node n, int depth)> frontier = new Stack<(Node n, int depth)>();
             frontier.Push((Root,0));
-            int expandedNodes = 0;
+            expandedNodes = 0;
             double currentLimit = heuristic(Root.State), newLimit;
             (Node n, int depth) solution = (null, -1), currentNode;
 
@@ -70,6 +70,7 @@ namespace TP1.Models
                 }
                 currentLimit = newLimit;
             }
+            frontierCount = frontier.Count;
             return solution.n;
         }
     }
