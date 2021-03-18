@@ -31,7 +31,7 @@ namespace TP1.Models
                 foreach(var action in current.Node.State.PosibleActions())
                 {
                     Node child = new(current.Node, action.Value, action.Key);
-                    if (!found.Contains(child.State))
+                    if (!found.Contains(child.State) && !child.State.IsDead())
                     {
                         found.Add(child.State);
                         heap.Add(new(child, current.Depth + 1));

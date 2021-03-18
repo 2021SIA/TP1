@@ -32,8 +32,8 @@ namespace TP1.Models
                 while (searchStack.Count > 0)
                 {
                     currentNode = searchStack.Pop();
-                    //Si es un estado repetido no lo expando.
-                    if(statesCache.TryGetValue(currentNode.n.State, out int repeatedDepth) && repeatedDepth <= currentNode.depth)
+                    //Si es un estado repetido o muerto no lo expando.
+                    if((statesCache.TryGetValue(currentNode.n.State, out int repeatedDepth) && repeatedDepth <= currentNode.depth) || currentNode.n.State.IsDead())
                     {
                         continue;
                     }
