@@ -16,6 +16,14 @@ namespace TP1
             BFS, DFS, IDDFS, GGS, IDAStar, AStar
         }
 
+        /// <summary>
+        /// Sokoban map solver
+        /// </summary>
+        /// <param name="map">Map to analize</param>
+        /// <param name="show">Print the intermediate states in the solution found</param>
+        /// <param name="strategy">Search method to use</param>
+        /// <param name="heuristic">Heuristic to use in informed search methods. Can be 1, 2 or 3</param>
+        /// <param name="depth">Initial depth for IDDFS</param>
         static void Main(FileInfo map, bool show, Algorithms strategy, int heuristic = 1, int depth = 30)
         {
             var game = SokobanFactory.FromFile(map.FullName);
